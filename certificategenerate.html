@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate Generator</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    select, input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      width: 60%;
+    }
+
+    .form-section {
+      margin-top: 20px;
+    }
+
+    #certificate {
+      display: none;
+      width: 800px;
+      margin: 30px auto;
+      padding: 40px;
+      border: 3px solid #000;
+      background-color: #fff;
+      text-align: left;
+    }
+
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+    }
+
+    .cert-content {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-top: 30px;
+    }
+
+    .sign-area {
+      text-align: right;
+      margin-top: 60px;
+    }
+
+    .cert-label {
+      font-weight: bold;
+    }
+
+    #downloadBtn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Certificate Generator</h2>
+
+  <select id="certificateType" onchange="showForm()">
+    <option value="">-- Select Certificate Type --</option>
+    <option value="income">Income Certificate</option>
+    <option value="community">Community Certificate</option>
+  </select>
+
+  <div class="form-section" id="incomeForm" style="display:none;">
+    <h3>Income Certificate Form</h3>
+    <input type="text" id="i_name" placeholder="Full Name"><br>
+    <input type="text" id="i_father" placeholder="Father's Name"><br>
+    <input type="text" id="i_address" placeholder="Address"><br>
+    <input type="number" id="i_income" placeholder="Annual Income (in ₹)"><br>
+    <input type="date" id="i_date"><br>
+    <button onclick="generateIncome()">Generate Income Certificate</button>
+  </div>
+
+  <div class="form-section" id="communityForm" style="display:none;">
+    <h3>Community Certificate Form</h3>
+    <input type="text" id="c_name" placeholder="Full Name"><br>
+    <input type="text" id="c_father" placeholder="Father's Name"><br>
+    <input type="text" id="c_address" placeholder="Address"><br>
+    <input type="text" id="c_community" placeholder="Community Name"><br>
+    <input type="date" id="c_date"><br>
+    <button onclick="generateCommunity()">Generate Community Certificate</button>
+  </div>
+
+  <div id="certificate">
+    <h1 id="certTitle">CERTIFICATE</h1>
+    <div class="cert-content" id="certText">
+      <!-- Generated certificate content appears here -->
+    </div>
+    <div class="sign-area">
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+
+  <button id="downloadBtn" onclick="downloadCertificate()">Download Certificate</button>
+
+  <script>
+    function showForm() {
+      const type = document.getElementById('certificateType').value;
+      document.getElementById('incomeForm').style.display = (type === 'income') ? 'block' : 'none';
+      document.getElementById('communityForm').style.display = (type === 'community') ? 'block' : 'none';
+      document.getElementById('certificate').style.display = 'none';
+      document.getElementById('downloadBtn').style.display = 'none';
+    }
+
+    function generateIncome() {
+      const name = document.getElementById('i_name').value;
+      const father = document.getElementById('i_father').value;
+      const address = document.getElementById('i_address').value;
+      const income = document.getElementById('i_income').value;
+      const date = document.getElementById('i_date').value;
+
+      if (!name || !father || !address || !income || !date) {
+        alert("Please fill in all Income Certificate fields.");
+        return;
+      }
+
+      document.getElementById('certTitle').innerText = "INCOME CERTIFICATE";
+      document.getElementById('certText').innerHTML = `
+        <p>This is to certify that <span class="cert-label">${name}</span>, S/D of 
+        <span class="cert-label">${father}</span>, residing at 
+        <span class="cert-label">${address}</span>, is known to be a resident of this locality.</p>
+        <p>As per records and verification, the total annual income of the family is 
+        <span class="cert-label">${income}</span> Rupees only.</p>
+        <p>This certificate is issued on <span class="cert-label">${date}</span> for official purposes.</p>
+      `;
+
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+    }
+
+    function generateCommunity() {
+      const name = document.getElementById('c_name').value;
+      const father = document.getElementById('c_father').value;
+      const address = document.getElementById('c_address').value;
+      const community = document.getElementById('c_community').value;
+      const date = document.getElementById('c_date').value;
+
+      if (!name || !father || !address || !community || !date) {
+        alert("Please fill in all Community Certificate fields.");
+        return;
+      }
+
+      document.getElementById('certTitle').innerText = "COMMUNITY CERTIFICATE";
+      document.getElementById('certText').innerHTML = `
+        <p>This is to certify that <span class="cert-label">${name}</span>, S/D of 
+        <span class="cert-label">${father}</span>, residing at 
+        <span class="cert-label">${address}</span>, belongs to 
+        <span class="cert-label">${community}</span> community.</p>
+        <p>This certificate is issued on <span class="cert-label">${date}</span> for community verification purposes.</p>
+      `;
+
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+    }
+
+    function downloadCertificate() {
+      html2canvas(document.getElementById('certificate')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'certificate.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  </script>
+
+</body>
+</html>
